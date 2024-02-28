@@ -188,6 +188,9 @@ app.delete('/delete',(req,res)=>{
     .then(msg=>{
         res.send("post deleted successfully");
     })
+    .catch((err)=>{
+        res.send("not authorized")
+    })
 
 })
 
