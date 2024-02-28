@@ -164,6 +164,32 @@ app.post('/post',(req,res)=>{
 })
 
 
+app.delete('/delete',(req,res)=>{
+    const todelete = req.body.postTitle
+    const {authorization} = req.headers
+    if (!authorization) {
+        res.status(401).json({ error: "you be logged in" })
+    }
+    // remove Bearer from the token
+    const token = authorization.replace("Bearer ", "")
+
+    // verify the token and send the response
+    let _id;
+    jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
+        if (err) {
+            return res.status(401).json({ error: "you must be logged in" })
+
+        }
+
+        _id = payload._id
+        
+    })
+    Post.findOneAndDelete({title:todelete,postedBy:_id})
+    .then(msg=>{
+        res.send("post deleted successfully");
+    })
+
+})
 
 app.listen(process.env.PORT, () => {
     console.log("Listining on " + process.env.PORT);
