@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-export default  (req,res,next)=>{
+const requireLogin = (req,res,next)=>{
     const {authorization} = req.headers
     if(!authorization){
         res.status(401).json({error:"you be logged in"})
