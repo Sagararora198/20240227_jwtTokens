@@ -3,9 +3,9 @@ import 'dotenv/config'
 import jwt from 'jsonwebtoken'
 import mongoose from "mongoose"
 import User from "./Models/userModel.js"
+import Post from "./Models/postModel.js"
 const app = express()
 app.use(json())
-
 app.get('/', (req, res) => {
     console.log("works");
 })
@@ -105,7 +105,7 @@ app.get('/post', (req, res) => {
     }
     // remove Bearer from the token
     const token = authorization.replace("Bearer ", "")
-
+    let _id;
     // verify the token and send the response
     jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
         if (err) {
@@ -113,9 +113,15 @@ app.get('/post', (req, res) => {
 
         }
 
-        const username = payload
-        res.send(username)
+         _id = payload._id
+        
     })
+    Post.find({postedBy:_id})
+    .populate("postedBy","_id name")
+    .then(posts=>{
+        res.json(posts)
+    })
+
 
 
 })
@@ -132,14 +138,27 @@ app.post('/post',(req,res)=>{
     const token = authorization.replace("Bearer ", "")
 
     // verify the token and send the response
+    let _id;
     jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
         if (err) {
             return res.status(401).json({ error: "you must be logged in" })
 
         }
 
-        const username = payload
+        _id = payload._id
         
+    })
+    const post = new Post({
+        title:title,
+        body:body,
+        postedBy:_id
+    })
+    post.save()
+    .then(savedpost=>{
+        res.send("saved successfully")
+    })
+    .catch(err=>{
+        res.json(err)
     })
 
 })

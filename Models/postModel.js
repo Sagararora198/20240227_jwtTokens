@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "./userModel";
+import User from "./userModel.js";
 const PostSchema = new mongoose.Schema({
     title:{
         type:String,
@@ -14,5 +14,5 @@ const PostSchema = new mongoose.Schema({
         ref:User
     }
 })
-const Post = mongoose.model('Post',PostSchema)
+const Post = mongoose.model('Posts',PostSchema)
 export default Post
